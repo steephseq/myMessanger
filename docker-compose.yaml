@@ -1,0 +1,49 @@
+services:
+  backend:
+  #todo
+  frontend:
+  #todo
+  db:
+    image: postgres:16.0
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_MULTIPLE_DATABASES: "auth,profile,users,chats"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "chmod +x /check-databases.sh && /check-databases.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis:7.2.6-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  auth-service:
+    build: ./auth-service
+    image: auth-service:latest
+    env_file:
+      - ./.env.common
+    environment:
+      - DB_NAME=users
+      - SERVER_PORT=50051
+    ports:
+      - "50051:50051"
+    depends_on:
+      - db
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:50051/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

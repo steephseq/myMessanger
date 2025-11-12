@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package user;
+
+option go_package="mess/pkg/proto/userpb;userpb";
+
+service UserService {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+}
+
+message CreateUserRequest {
+    string email = 1;
+    string password = 2;
+    string name = 3;
+    string username = 4;
+    string avatar_url = 5;
+    string bio = 6;
+}
+
+message CreateUserResponse {
+    bool success = 1;
+    string user_id = 2;
+}
