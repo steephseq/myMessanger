@@ -11,6 +11,10 @@ func Load() *models.Config {
 				Port:  "50051",
 				Paths: []string{"/login", "/register", "/"},
 			},
+			{
+				Name: "user_service",
+				Port: "50052",
+				Paths: []string{"/createUser","/deleteUser","",
 			/*
 				{
 					Name:  "profile-service",
